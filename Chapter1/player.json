@@ -1,0 +1,16 @@
+{
+    "hamlet" : {
+        "name": "Hamlet",
+        "type": "tragedy"
+    },
+
+    "as-like": {
+        "name": "As you Liek It",
+        "type": "comedy"
+    },
+    
+    "othello": {
+        "name": "Othello",
+        "type": "tragedy"
+    }
+}
