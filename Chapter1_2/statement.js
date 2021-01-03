@@ -39,34 +39,39 @@ function statement(invoices, plays) {
   // perf와 play는 추출한 새 함수에서도 필요하지만 값을 변경하지 않기 때문에 매개변수로 전달하면 된다.
   // 한편 thisAmount는 함수 안에서 값이 바뀌는데, 이런 변수는 조심해서 다뤄야 한다.
   // 이번 예에서는 이런 변수가 하나뿐이므로 이 값을 반환하도록 작성했다.
-  function amountFor(perf, play) {
-    let thisAmount = 0;
+  function amountFor(aPerformance, play) {
+    // 변수의 이름을 명확하게 바꾸기 resultAmount -> result
+    let result = 0;
     switch (play.type) {
       case "tragedy": {
         // 비극
-        thisAmount = 40000;
-        if (perf.audience > 30) {
-          thisAmount += 1000 * (perf.audience - 30);
+        result = 40000;
+        if (aPerformance.audience > 30) {
+          result += 1000 * (aPerformance.audience - 30);
         }
         break;
       }
       case "comedy": {
         // 희극
-        thisAmount = 30000;
-        if (perf.audience > 20) {
-          thisAmount += 10000 + 500 * (perf.audience - 20);
+        result = 30000;
+        if (aPerformance.audience > 20) {
+          result += 10000 + 500 * (aPerformance.audience - 20);
         }
-        thisAmount += 300 * perf.audience;
+        result += 300 * aPerformance.audience;
         break;
       }
       default:
         throw new Error(`알 수 없는 장르: ${play.type}`);
     }
-    return thisAmount;
+    return result;
+  }
+
+  function playFor(aPerformance) {
+      return plays[aPerformance.playID];
   }
 
   for (let perf of invoices.performances) {
-    const play = plays[perf.playID];
+    const play = playFor(perf);
     let thisAmount = amountFor(perf, play);
 
     // 포인트를 적립한다.
@@ -81,6 +86,8 @@ function statement(invoices, plays) {
     }석)\n`;
     totalAmount += thisAmount;
   }
+
+
 
   result += `총액: ${format(totalAmount / 100)}\n`;
   result += `적립 포인트 : ${volumeCredits}점\n`;
