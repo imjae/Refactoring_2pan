@@ -25,15 +25,15 @@ let invoices = [
 ];
 
 function statement(invoices, plays) {
-    let totalAmount = 0;
-    let volumeCredits = 0;
     let result = `청구 내역 (고객명: ${invoices.customer})\n`;
-    const format = new Intl.NumberFormat("en-US", {
-        style: "currency",
-        currency: "USD",
-        minimumFractionDigits: 2,
-    }).format;
 
+    function usd(aNumber) {
+        new Intl.NumberFormat("en-US", {
+            style: "currency",
+            currency: "USD",
+            minimumFractionDigits: 2,
+        }).format(aNumber/100);
+    }
     // 별도 함수로 빼냈을 때 유효범위를 벗어나는 변수, 즉 새 함수에서는 곧바로 사용할 수 없는 변수가 있는지 확인한다.
     // 이번 예에서는 perf, play, thisAmount가 여기 속한다.
     // perf와 play는 추출한 새 함수에서도 필요하지만 값을 변경하지 않기 때문에 매개변수로 전달하면 된다.
@@ -80,24 +80,30 @@ function statement(invoices, plays) {
         return result;
     }
 
-    for (let perf of invoices.performances) {
-        // 1. 임시변수 질의 함수로 변경하기
-        //    const play = plays[perf.playID];
-        // 2. 변수 인라인하기
-        //    const play = playFor(perf);
-        // 3. 변수 인라인하기
-        //    let thisAmount = amountFor(perf);
-
-        volumeCredits += volumeCreditsFor(perf);
-
-        // 청구 내역을 출력한다.
-        result += `    ${playFor(perf).name}: ${format(amountFor(perf) / 100)} (${perf.audience
-            }석)\n`;
-        totalAmount += amountFor(perf);
+    function totalVolumeCredits() {
+        let result = 0;
+        for (let perf of invoices.performances) {
+            result += volumeCreditsFor(perf);
+        }
+        return result;
     }
 
-    result += `총액: ${format(totalAmount / 100)}\n`;
-    result += `적립 포인트 : ${volumeCredits}점\n`;
+    function totalAmount() {
+        let result = 0;
+        for (let perf of invoices.performances) {
+            result += amountFor(perf);
+        }
+        return result;
+    }
+
+    for (let perf of invoices.performances) {
+        // 청구 내역을 출력한다.
+        result += `    ${playFor(perf).name}: ${usd(amountFor(perf))} (${perf.audience
+            }석)\n`;
+    }
+
+    result += `총액: ${usd(totalAmount())}\n`;
+    result += `적립 포인트 : ${totalVolumeCredits()}점\n`;
     return result;
 }
 
