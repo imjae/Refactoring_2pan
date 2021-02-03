@@ -87,5 +87,5 @@ const statement = (invoice, plays) => {
   return result;
 };
 
-
+// 커밋 테스트 위한 주석
 console.log(statement(invoices[0], plays));
