@@ -38,11 +38,13 @@ const statement = (invoice, plays) => {
   let volumeCredits = 0;
   let result = `청구 내역 (고객명 : ${invoice.customer})\n`;
 
-  const format = new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency: "USD",
-    minimumFractionDigits: 2,
-  }).format;
+  const usd = (aNumber) => {
+    return new Intl.NumberFormat("en-US", {
+      style: "currency",
+      currency: "USD",
+      minimumFractionDigits: 2,
+    }).format(aNumber/100);
+  };
 
   const amountFor = (aPerformance) => {
     let result = 0;
@@ -86,11 +88,11 @@ const statement = (invoice, plays) => {
   for (let perf of invoice.performances) {
     volumeCredits += volumeCreditsFor(perf);
     // 청구 내역을 출력한다.
-    result += `${playFor(perf).name}: ${format(amountFor(perf)/100)} (${perf.audience}석)\n`;
+    result += `${playFor(perf).name}: ${usd(amountFor(perf))} (${perf.audience}석)\n`;
     totalAmout += amountFor(perf);
   }
 
-  result += `총액: ${format(totalAmout/100)}\n`;
+  result += `총액: ${usd(totalAmout)}\n`;
   result += `적립 포인트: ${volumeCredits}점\n`;
   return result;
 };
