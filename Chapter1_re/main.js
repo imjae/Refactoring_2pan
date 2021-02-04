@@ -34,6 +34,10 @@ const invoices = [
 ];
 
 function statement (invoice, plays) {
+  return renderPlainText(invoice, plays);
+};
+
+function renderPlainText(invoice, plays) {
   let result = `청구 내역 (고객명 : ${invoice.customer})\n`;
   for (let perf of invoice.performances) {
     result += `${playFor(perf).name}: ${usd(amountFor(perf))} (${perf.audience}석)\n`;
@@ -105,7 +109,7 @@ function statement (invoice, plays) {
     }
     return result;
   };
-};
+}
 
 // 커밋 테스트 위한 주석
 console.log(statement(invoices[0], plays));
