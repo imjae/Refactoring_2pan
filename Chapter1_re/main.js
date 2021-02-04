@@ -34,8 +34,6 @@ const invoices = [
 ];
 
 const statement = (invoice, plays) => {
-  let result = `청구 내역 (고객명 : ${invoice.customer})\n`;
-
   const usd = (aNumber) => {
     return new Intl.NumberFormat("en-US", {
       style: "currency",
@@ -82,9 +80,6 @@ const statement = (invoice, plays) => {
 
     return result;
   };
-  for (let perf of invoice.performances) {
-    result += `${playFor(perf).name}: ${usd(amountFor(perf))} (${perf.audience}석)\n`;
-  }
 
   const totalAmount = () => {
     let result = 0;
@@ -96,13 +91,18 @@ const statement = (invoice, plays) => {
   };
   
   const totalVolumeCredits = () => {
-    let volumeCredits = 0;
+    let result = 0;
     for (let perf of invoice.performances) {
-      volumeCredits += volumeCreditsFor(perf);
+      result += volumeCreditsFor(perf);
     }
-    return volumeCredits;
+    return result;
   };
 
+  
+  let result = `청구 내역 (고객명 : ${invoice.customer})\n`;
+  for (let perf of invoice.performances) {
+    result += `${playFor(perf).name}: ${usd(amountFor(perf))} (${perf.audience}석)\n`;
+  }
   result += `총액: ${usd(totalAmount())}\n`;
   result += `적립 포인트: ${totalVolumeCredits()}점\n`;
   return result;
