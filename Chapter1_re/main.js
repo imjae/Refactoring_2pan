@@ -33,8 +33,16 @@ const invoices = [
   },
 ];
 
-const statement = (invoice, plays) => {
-  const usd = (aNumber) => {
+function statement (invoice, plays) {
+  let result = `청구 내역 (고객명 : ${invoice.customer})\n`;
+  for (let perf of invoice.performances) {
+    result += `${playFor(perf).name}: ${usd(amountFor(perf))} (${perf.audience}석)\n`;
+  }
+  result += `총액: ${usd(totalAmount())}\n`;
+  result += `적립 포인트: ${totalVolumeCredits()}점\n`;
+  return result;
+  
+  function usd(aNumber) {
     return new Intl.NumberFormat("en-US", {
       style: "currency",
       currency: "USD",
@@ -42,7 +50,7 @@ const statement = (invoice, plays) => {
     }).format(aNumber/100);
   };
 
-  const amountFor = (aPerformance) => {
+  function amountFor(aPerformance) {
     let result = 0;
 
     switch (playFor(aPerformance).type) {
@@ -66,11 +74,11 @@ const statement = (invoice, plays) => {
     return result;
   };
 
-  const playFor = (aPerformance) => {
+  function playFor(aPerformance) {
     return plays[aPerformance.playID];
   };
 
-  const volumeCreditsFor = (aPerformance) => {
+  function volumeCreditsFor(aPerformance) {
     // 포인트를 적립한다.
     let result = 0;
     result += Math.max(aPerformance.audience - 30, 0);
@@ -81,7 +89,7 @@ const statement = (invoice, plays) => {
     return result;
   };
 
-  const totalAmount = () => {
+  function totalAmount ()  {
     let result = 0;
     for (let perf of invoice.performances) {
       // 청구 내역을 출력한다.
@@ -90,22 +98,13 @@ const statement = (invoice, plays) => {
     return result;
   };
   
-  const totalVolumeCredits = () => {
+  function totalVolumeCredits ()  {
     let result = 0;
     for (let perf of invoice.performances) {
       result += volumeCreditsFor(perf);
     }
     return result;
   };
-
-  
-  let result = `청구 내역 (고객명 : ${invoice.customer})\n`;
-  for (let perf of invoice.performances) {
-    result += `${playFor(perf).name}: ${usd(amountFor(perf))} (${perf.audience}석)\n`;
-  }
-  result += `총액: ${usd(totalAmount())}\n`;
-  result += `적립 포인트: ${totalVolumeCredits()}점\n`;
-  return result;
 };
 
 // 커밋 테스트 위한 주석
