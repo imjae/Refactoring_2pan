@@ -37,6 +37,8 @@ function statement(invoice, plays) {
   const statementData = {};
   statementData.customer = invoice.customer;
   statementData.performances = invoice.performances.map(enrichPerformance);
+  statementData.totalAmount = totalAmount(statementData);
+  statementData.totalVolumeCredits = totalVolumeCredits(statementData);
   return renderPlainText(statementData, plays);
 
   function enrichPerformance(aPerformance) {
@@ -83,6 +85,12 @@ function statement(invoice, plays) {
 
     return result;
   };
+  function totalAmount (data) {
+    return data.performances.reduce((total, p) => total + p.amount, 0);
+  };
+  function totalVolumeCredits (data) {
+    return data.performances.reduce((total, p) => total + p.volumeCredits, 0);
+  };
 };
 
 function renderPlainText(data, plays) {
@@ -90,8 +98,8 @@ function renderPlainText(data, plays) {
   for (let perf of data.performances) {
     result += `${perf.play.name}: ${usd(perf.amount)} (${perf.audience}석)\n`;
   }
-  result += `총액: ${usd(totalAmount())}\n`;
-  result += `적립 포인트: ${totalVolumeCredits()}점\n`;
+  result += `총액: ${usd(data.totalAmount)}\n`;
+  result += `적립 포인트: ${data.totalVolumeCredits}점\n`;
   return result;
   
   function usd(aNumber) {
@@ -102,24 +110,6 @@ function renderPlainText(data, plays) {
     }).format(aNumber/100);
   };
 
-  
-
-  function totalAmount ()  {
-    let result = 0;
-    for (let perf of data.performances) {
-      // 청구 내역을 출력한다.
-      result += perf.amount;
-    }
-    return result;
-  };
-  
-  function totalVolumeCredits ()  {
-    let result = 0;
-    for (let perf of data.performances) {
-      result += perf.volumeCredits;
-    }
-    return result;
-  };
 }
 
 // 커밋 테스트 위한 주석
