@@ -82,14 +82,17 @@ const statement = (invoice, plays) => {
 
     return result;
   };
+  for (let perf of invoice.performances) {
+    result += `${playFor(perf).name}: ${usd(amountFor(perf))} (${perf.audience}석)\n`;
+  }
+
   const totalAmount = () => {
-    let totalAmount = 0;
+    let result = 0;
     for (let perf of invoice.performances) {
       // 청구 내역을 출력한다.
-      result += `${playFor(perf).name}: ${usd(amountFor(perf))} (${perf.audience}석)\n`;
-      totalAmount += amountFor(perf);
+      result += amountFor(perf);
     }
-    return totalAmount;
+    return result;
   };
   
   const totalVolumeCredits = () => {
