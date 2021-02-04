@@ -72,13 +72,19 @@ const statement = (invoice, plays) => {
     return plays[aPerformance.playID];
   };
 
-  for (let perf of invoice.performances) {
+  const volumeCreditsFor = (perf) => {
     // 포인트를 적립한다.
+    let volumeCredits = 0;
     volumeCredits += Math.max(perf.audience - 30, 0);
 
     // 희극 관객 5명마다 추가 포인트를 제공한다.
     if("comedy" === playFor(perf).type) volumeCredits += Math.floor(perf.audience / 5);
 
+    return volumeCredits;
+  };
+
+  for (let perf of invoice.performances) {
+    volumeCredits += volumeCreditsFor(perf);
     // 청구 내역을 출력한다.
     result += `${playFor(perf).name}: ${format(amountFor(perf)/100)} (${perf.audience}석)\n`;
     totalAmout += amountFor(perf);
